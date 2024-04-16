@@ -2,6 +2,7 @@ package request
 
 import (
 	"crypto/tls"
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -132,4 +133,17 @@ func WithSkipVerifyCertificates(skipVerify bool) ClientOption {
 
 		return nil
 	}
+}
+
+func (c *Client) BaseURL() string {
+	return fmt.Sprintf("%s://%s:%d", c.Scheme, c.Host, c.Port)
+}
+
+func (c *Client) Do(req *Request) (*http.Response, error) {
+	httpRequest, err := req.build(c.BaseURL())
+	if err != nil {
+		return nil, err
+	}
+
+	return c.instance.Do(httpRequest)
 }
