@@ -60,7 +60,7 @@ func (p *JsonBodyParams) Build() (contentType string, body io.Reader, err error)
 		return
 	}
 
-	contentType = "application/json; charset=utf-8"
+	contentType = contentTypeJsonWithUTF8
 	body = bytes.NewReader(data)
 
 	return

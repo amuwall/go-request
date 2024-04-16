@@ -85,8 +85,8 @@ func (req *Request) build(baseURL string) (httpRequest *http.Request, err error)
 			return
 		}
 		if contentType != "" {
-			if req.Headers.Get("Content-Type") != "" {
-				req.Headers.Set("Content-Type", contentType)
+			if req.Headers.Get(contentTypeHeader) != "" {
+				req.Headers.Set(contentTypeHeader, contentType)
 			}
 		}
 	}

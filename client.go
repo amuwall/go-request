@@ -139,11 +139,16 @@ func (c *Client) BaseURL() string {
 	return fmt.Sprintf("%s://%s:%d", c.Scheme, c.Host, c.Port)
 }
 
-func (c *Client) Do(req *Request) (*http.Response, error) {
+func (c *Client) Do(req *Request) (*Response, error) {
 	httpRequest, err := req.build(c.BaseURL())
 	if err != nil {
 		return nil, err
 	}
 
-	return c.instance.Do(httpRequest)
+	httpResponse, err := c.instance.Do(httpRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseResponse(httpResponse)
 }
