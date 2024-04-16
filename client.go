@@ -1,6 +1,7 @@
 package request
 
 import (
+	"crypto/tls"
 	"net/http"
 	"time"
 )
@@ -10,7 +11,8 @@ type Client struct {
 	Host   string
 	Port   uint16
 
-	instance *http.Client
+	instance  *http.Client
+	transport *http.Transport
 }
 
 type ClientOption func(*Client) error
@@ -26,9 +28,8 @@ func NewClient(host string, options ...ClientOption) (client *Client, err error)
 		Host:   host,
 		Port:   defaultPort,
 
-		instance: &http.Client{
-			Timeout: 10 * time.Second,
-		},
+		instance:  &http.Client{},
+		transport: &http.Transport{},
 	}
 
 	for _, option := range options {
@@ -38,5 +39,97 @@ func NewClient(host string, options ...ClientOption) (client *Client, err error)
 		}
 	}
 
+	client.instance.Transport = client.transport
+
 	return
+}
+
+func WithScheme(scheme string) ClientOption {
+	return func(c *Client) error {
+		c.Scheme = scheme
+		return nil
+	}
+}
+
+func WithPort(port uint16) ClientOption {
+	return func(c *Client) error {
+		c.Port = port
+		return nil
+	}
+}
+
+func WithTransport(transport *http.Transport) ClientOption {
+	return func(c *Client) error {
+		c.transport = transport
+		return nil
+	}
+}
+
+func WithTimeout(timeout time.Duration) ClientOption {
+	return func(c *Client) error {
+		c.instance.Timeout = timeout
+		return nil
+	}
+}
+
+func WithClientCertificateBlock(clientCrtBlock, clientKeyBlock []byte) ClientOption {
+	return func(c *Client) error {
+		if c.transport.TLSClientConfig == nil {
+			c.transport.TLSClientConfig = &tls.Config{}
+		}
+
+		certificate, err := tls.X509KeyPair(clientCrtBlock, clientKeyBlock)
+		if err != nil {
+			return err
+		}
+
+		c.transport.TLSClientConfig.Certificates = append(
+			c.transport.TLSClientConfig.Certificates, certificate,
+		)
+
+		return nil
+	}
+}
+
+func WithClientCertificateFile(clientCrtFile, clientKeyFile string) ClientOption {
+	return func(c *Client) error {
+		if c.transport.TLSClientConfig == nil {
+			c.transport.TLSClientConfig = &tls.Config{}
+		}
+
+		certificate, err := tls.LoadX509KeyPair(clientCrtFile, clientKeyFile)
+		if err != nil {
+			return err
+		}
+
+		c.transport.TLSClientConfig.Certificates = append(
+			c.transport.TLSClientConfig.Certificates, certificate,
+		)
+
+		return nil
+	}
+}
+
+func WithTLSServerName(serverName string) ClientOption {
+	return func(c *Client) error {
+		if c.transport.TLSClientConfig == nil {
+			c.transport.TLSClientConfig = &tls.Config{}
+		}
+
+		c.transport.TLSClientConfig.ServerName = serverName
+
+		return nil
+	}
+}
+
+func WithSkipVerifyCertificates(skipVerify bool) ClientOption {
+	return func(c *Client) error {
+		if c.transport.TLSClientConfig == nil {
+			c.transport.TLSClientConfig = &tls.Config{}
+		}
+
+		c.transport.TLSClientConfig.InsecureSkipVerify = skipVerify
+
+		return nil
+	}
 }
