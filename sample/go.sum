@@ -1,2 +1,2 @@
-github.com/amuwall/go-request v0.0.0-20240417070024-f006b7c7ea9e h1:7DZPGoWsmeY2cwGrZV+mwVvn7OcWMaVS/gfmxQrYqGM=
-github.com/amuwall/go-request v0.0.0-20240417070024-f006b7c7ea9e/go.mod h1:G8uMoJJpfrwPYgyWl0MjvmqdFs3fZKMI8mhE6jVuoCo=
+github.com/amuwall/go-request v1.0.0 h1:B/cKJjIBiLHFNXLnaRd61ayeounvDtwexvhxaLXTpWI=
+github.com/amuwall/go-request v1.0.0/go.mod h1:G8uMoJJpfrwPYgyWl0MjvmqdFs3fZKMI8mhE6jVuoCo=
