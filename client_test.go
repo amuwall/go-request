@@ -219,25 +219,18 @@ func TestWithTLSServerName(t *testing.T) {
 }
 
 func TestWithSkipVerifyCertificates(t *testing.T) {
-	type args struct {
-		skipVerify bool
-	}
 	tests := []struct {
 		name string
-		args args
 		want bool
 	}{
 		{
 			name: "init client with skipVerify",
-			args: args{
-				skipVerify: true,
-			},
 			want: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			client, _ := NewClient("127.0.0.1", WithSkipVerifyCertificates(tt.args.skipVerify))
+			client, _ := NewClient("127.0.0.1", WithSkipVerifyCertificates())
 			if client.transport.TLSClientConfig.InsecureSkipVerify != tt.want {
 				t.Errorf(
 					"WithSkipVerifyCertificates() = %v, want %v",

@@ -123,13 +123,13 @@ func WithTLSServerName(serverName string) ClientOption {
 	}
 }
 
-func WithSkipVerifyCertificates(skipVerify bool) ClientOption {
+func WithSkipVerifyCertificates() ClientOption {
 	return func(c *Client) error {
 		if c.transport.TLSClientConfig == nil {
 			c.transport.TLSClientConfig = &tls.Config{}
 		}
 
-		c.transport.TLSClientConfig.InsecureSkipVerify = skipVerify
+		c.transport.TLSClientConfig.InsecureSkipVerify = true
 
 		return nil
 	}
